@@ -287,7 +287,8 @@ public final class UdpMatcher extends BaseMatcher {
 					LOGGER.trace("received duplicate response for open {}: {}", exchange, response);
 					response.setDuplicate(true);
 				} else if (!exchange.isNotification()) {
-					if (response.isNotification() && response.getType() != Type.ACK && !exchange.getRequest().isObserve()) {
+					if (response.isNotification() && response.getType() != Type.ACK
+							&& !exchange.getRequest().isObserve() && !exchange.getCurrentRequest().isAcknowledged()) {
 						// notification for none observe request
 						// including observation cancel request
 						LOGGER.debug("ignoring notify {}!", response);
@@ -322,8 +323,7 @@ public final class UdpMatcher extends BaseMatcher {
 		Exchange exchange = exchangeStore.remove(idByMID, null);
 
 		if (exchange == null) {
-			LOGGER.debug("ignoring unmatchable empty message from {}: {}",
-					new Object[] { message.getSourceContext(), message });
+			LOGGER.debug("ignoring unmatchable empty message from {}: {}", message.getSourceContext(), message);
 			return null;
 		}
 		try {
